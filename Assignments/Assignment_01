@@ -1,1 +1,255 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+abstract class Employee {
+    private String fullName;
+    private String jobTitle;
+    private String ssn;
+
+    public Employee(String fullName, String jobTitle, String ssn) {
+        this.fullName = fullName;
+        this.jobTitle = jobTitle;
+        this.ssn = ssn;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getSsn() {
+        return ssn;
+    }
+
+    public abstract String getEmployeeDetails();
+}
+
+class FullTimeSalariedEmployee extends Employee {
+    private int weeklyHours;
+    private double annualSalary;
+
+    public FullTimeSalariedEmployee(String fullName, String jobTitle, String ssn, int weeklyHours, double annualSalary) {
+        super(fullName, jobTitle, ssn);
+        this.weeklyHours = weeklyHours;
+        this.annualSalary = annualSalary;
+    }
+
+    public int getWeeklyHours() {
+        return weeklyHours;
+    }
+
+    public void setWeeklyHours(int weeklyHours) {
+        this.weeklyHours = weeklyHours;
+    }
+
+    public double getAnnualSalary() {
+        return annualSalary;
+    }
+
+    public void setAnnualSalary(double annualSalary) {
+        this.annualSalary = annualSalary;
+    }
+
+    @Override
+    public String getEmployeeDetails() {
+        return "Full-Time Employee: " + getFullName() + ", Job Title: " + getJobTitle() + ", SSN: " + getSsn() + ", Weekly Hours: " + weeklyHours + ", Annual Salary: " + annualSalary;
+    }
+}
+
+class PartTimeSalariedEmployee extends Employee {
+    private int weeklyHours;
+    private double annualSalary;
+
+    public PartTimeSalariedEmployee(String fullName, String jobTitle, String ssn, int weeklyHours, double annualSalary) {
+        super(fullName, jobTitle, ssn);
+        this.weeklyHours = weeklyHours;
+        this.annualSalary = annualSalary;
+    }
+
+    public int getWeeklyHours() {
+        return weeklyHours;
+    }
+
+    public void setWeeklyHours(int weeklyHours) {
+        this.weeklyHours = weeklyHours;
+    }
+
+    public double getAnnualSalary() {
+        return annualSalary;
+    }
+
+    public void setAnnualSalary(double annualSalary) {
+        this.annualSalary = annualSalary;
+    }
+
+    @Override
+    public String getEmployeeDetails() {
+        return "Part-Time Employee: " + getFullName() + ", Job Title: " + getJobTitle() + ", SSN: " + getSsn() + ", Weekly Hours: " + weeklyHours + ", Annual Salary: " + annualSalary;
+    }
+}
+
+class ContractorEmployee extends Employee {
+    private double hourlyRate;
+
+    public ContractorEmployee(String fullName, String jobTitle, String ssn, double hourlyRate) {
+        super(fullName, jobTitle, ssn);
+        this.hourlyRate = hourlyRate;
+    }
+
+    public double getHourlyRate() {
+        return hourlyRate;
+    }
+
+    public void setHourlyRate(double hourlyRate) {
+        this.hourlyRate = hourlyRate;
+    }
+
+    @Override
+    public String getEmployeeDetails() {
+        return "Contractor Employee: " + getFullName() + ", Job Title: " + getJobTitle() + ", SSN: " + getSsn() + ", Hourly Rate: " + hourlyRate;
+    }
+}
+
+class HRManagementSystem {
+    private static final ArrayList<Employee> employees = new ArrayList<>();
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\nHR Management System");
+            System.out.println("1. Add Employee");
+            System.out.println("2. View Employees");
+            System.out.println("3. Delete Employee");
+            System.out.println("4. Update Employee");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1 -> addEmployee();
+                case 2 -> viewEmployees();
+                case 3 -> deleteEmployee();
+                case 4 -> updateEmployee();
+                case 5 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void addEmployee() {
+        System.out.println("\nAdd Employee");
+        System.out.println("1. Full-Time Salaried");
+        System.out.println("2. Part-Time Salaried");
+        System.out.println("3. Contractor");
+        System.out.print("Choose type: ");
+        int type = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        System.out.print("Enter Full Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Job Title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter SSN: ");
+        String ssn = scanner.nextLine();
+
+        switch (type) {
+            case 1 -> {
+                System.out.print("Enter Weekly Hours (e.g., 45): ");
+                int weeklyHours = scanner.nextInt();
+                System.out.print("Enter Annual Salary: ");
+                double salary = scanner.nextDouble();
+                employees.add(new FullTimeSalariedEmployee(name, title, ssn, weeklyHours, salary));
+            }
+            case 2 -> {
+                System.out.print("Enter Weekly Hours (20-40): ");
+                int weeklyHours = scanner.nextInt();
+                System.out.print("Enter Annual Salary: ");
+                double salary = scanner.nextDouble();
+                employees.add(new PartTimeSalariedEmployee(name, title, ssn, weeklyHours, salary));
+            }
+            case 3 -> {
+                System.out.print("Enter Hourly Rate: ");
+                double hourlyRate = scanner.nextDouble();
+                employees.add(new ContractorEmployee(name, title, ssn, hourlyRate));
+            }
+            default -> System.out.println("Invalid type selected.");
+        }
+        System.out.println("Employee added successfully!");
+    }
+
+    private static void viewEmployees() {
+        System.out.println("\nEmployee Details:");
+        for (Employee employee : employees) {
+            System.out.println(employee.getEmployeeDetails());
+        }
+    }
+
+    private static void deleteEmployee() {
+        System.out.print("Enter SSN of employee to delete: ");
+        String ssn = scanner.nextLine();
+
+        boolean removed = employees.removeIf(emp -> emp.getSsn().equals(ssn));
+        if (removed) {
+            System.out.println("Employee deleted successfully!");
+        } else {
+            System.out.println("Employee with SSN " + ssn + " not found.");
+        }
+    }
+
+    private static void updateEmployee() {
+        System.out.print("Enter SSN of employee to update: ");
+        String ssn = scanner.nextLine();
+
+        for (Employee employee : employees) {
+            if (employee.getSsn().equals(ssn)) {
+                System.out.print("Enter New Full Name (leave blank to keep current): ");
+                String name = scanner.nextLine();
+                if (!name.isBlank()) {
+                    employee.setFullName(name);
+                }
+
+                System.out.print("Enter New Job Title (leave blank to keep current): ");
+                String title = scanner.nextLine();
+                if (!title.isBlank()) {
+                    employee.setJobTitle(title);
+                }
+
+                if (employee instanceof FullTimeSalariedEmployee fullTime) {
+                    System.out.print("Enter New Weekly Hours (current: " + fullTime.getWeeklyHours() + "): ");
+                    fullTime.setWeeklyHours(scanner.nextInt());
+                    System.out.print("Enter New Annual Salary (current: " + fullTime.getAnnualSalary() + "): ");
+                    fullTime.setAnnualSalary(scanner.nextDouble());
+                } else if (employee instanceof PartTimeSalariedEmployee partTime) {
+                    System.out.print("Enter New Weekly Hours (current: " + partTime.getWeeklyHours() + "): ");
+                    partTime.setWeeklyHours(scanner.nextInt());
+                    System.out.print("Enter New Annual Salary (current: " + partTime.getAnnualSalary() + "): ");
+                    partTime.setAnnualSalary(scanner.nextDouble());
+                } else if (employee instanceof ContractorEmployee contractor) {
+                    System.out.print("Enter New Hourly Rate (current: " + contractor.getHourlyRate() + "): ");
+                    contractor.setHourlyRate(scanner.nextDouble());
+                }
+                scanner.nextLine(); // Consume newline
+                System.out.println("Employee updated successfully!");
+                return;
+            }
+        }
+        System.out.println("Employee with SSN " + ssn + " not found.");
+    }
+}
 
