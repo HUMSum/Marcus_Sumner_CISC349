@@ -252,4 +252,3 @@ class HRManagementSystem {
         System.out.println("Employee with SSN " + ssn + " not found.");
     }
 }
-
