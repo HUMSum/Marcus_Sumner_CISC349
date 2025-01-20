@@ -1,1 +1,271 @@
+//strings.xml 
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GeoQuiz</string>
 
+    <!-- Define the questions here -->
+    <string name="question_1">Canberra is the capital of Australia.</string>
+    <string name="question_2">The Pacific Ocean is larger than the Atlantic Ocean.</string>
+    <string name="question_3">The Suez Canal connects the Red Sea and the Indian Ocean.</string>
+    <string name="question_4">The source of the Nile River is in Egypt.</string>
+    <string name="question_5">The Amazon River is the longest river in the Americas.</string>
+    <string name="question_6">Lake Baikal is the world's oldest and deepest freshwater lake.</string>
+
+    <!-- Button text strings -->
+    <string name="true_button">True</string>
+    <string name="false_button">False</string>
+    <string name="next_button">Next</string>
+    <string name="show_answer_button">Show Answer</string>
+    <string name="cheat_button">Cheat!</string>
+
+    <!-- Toast messages -->
+    <string name="correct_toast">Correct!</string>
+    <string name="incorrect_toast">Incorrect!</string>
+    <string name="judgment_toast">Cheating is wrong.</string>
+
+    <!-- Warning and other messages -->
+    <string name="warning_text">Are you sure you want to do this?</string>
+    <!-- Add the new string resource -->
+    <string name="title_activity_cheat">Cheat Activity</string>
+    <!-- New string for answer placeholder -->
+    <string name="answer_placeholder">The answer will be shown here</string>
+</resources>
+
+activity_quiz.xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Question Text -->
+    <TextView
+        android:id="@+id/question_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:padding="24dp"
+        android:textSize="18sp"
+        android:textColor="#000000" />
+
+    <!-- Button Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center"
+        style="?android:attr/buttonBarStyle">
+
+        <Button
+            android:id="@+id/true_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/true_button"
+            android:layout_margin="8dp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/false_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/false_button"
+            android:layout_margin="8dp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/cheat_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cheat_button"
+            android:layout_margin="8dp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/next_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/next_button"
+            android:layout_margin="8dp"
+            style="?android:attr/buttonBarButtonStyle" />
+    </LinearLayout>
+</FrameLayout>
+
+activity_cheat.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.example.geoquizz.CheatActivity">
+
+    <!-- Warning Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:text="@string/warning_text"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textColor="#000000"/>
+
+    <!-- Answer Display Text -->
+    <TextView
+        android:id="@+id/answer_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:text="@string/answer_placeholder"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:textColor="#000000"/>
+
+    <!-- Show Answer Button -->
+    <Button
+        android:id="@+id/show_answer_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_answer_button"
+        android:layout_marginTop="24dp"
+        style="?android:attr/buttonBarButtonStyle"/>
+
+</LinearLayout>
+
+QuizAcitvity.java
+package com.example.geoquizz;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class QuizActivity extends AppCompatActivity {
+    private Button mTrueButton;
+    private Button mFalseButton;
+    private Button mNextButton;
+    private Button mCheatButton;
+    private TextView mQuestionTextView;
+
+    private int mCurrentIndex = 0;
+    private static final int REQUEST_CODE_CHEAT = 0;
+
+    private Question[] mQuestionBank = new Question[]{
+            new Question(R.string.question_1, true),
+            new Question(R.string.question_2, false),
+            new Question(R.string.question_3, true),
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_quiz);
+
+        mQuestionTextView = findViewById(R.id.question_text_view);
+        mTrueButton = findViewById(R.id.true_button);
+        mFalseButton = findViewById(R.id.false_button);
+        mNextButton = findViewById(R.id.next_button);
+        mCheatButton = findViewById(R.id.cheat_button);
+
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt("KEY_INDEX", 0);
+        }
+        updateQuestion();
+
+        mTrueButton.setOnClickListener(v -> checkAnswer(true));
+        mFalseButton.setOnClickListener(v -> checkAnswer(false));
+        mNextButton.setOnClickListener(v -> {
+            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+            updateQuestion();
+        });
+        mCheatButton.setOnClickListener(v -> {
+            boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+            Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
+            startActivityForResult(intent, REQUEST_CODE_CHEAT);
+        });
+    }
+
+    private void updateQuestion() {
+        int question = mQuestionBank[mCurrentIndex].getTextResId();
+        mQuestionTextView.setText(question);
+    }
+
+    private void checkAnswer(boolean userPressedTrue) {
+        boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+        int messageResId = userPressedTrue == answerIsTrue
+                ? R.string.correct_toast
+                : R.string.incorrect_toast;
+
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+    }
+}
+
+CheatActivity.java
+package com.example.geoquizz;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class CheatActivity extends AppCompatActivity {
+    private static final String EXTRA_ANSWER_IS_TRUE =
+            "com.example.quizapp.answer_is_true";
+
+    private boolean mAnswerIsTrue;
+    private TextView mAnswerTextView;
+    private Button mShowAnswerButton;
+
+    public static Intent newIntent(Context packageContext, boolean answerIsTrue) {
+        Intent intent = new Intent(packageContext, CheatActivity.class);
+        intent.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+        return intent;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_cheat);
+
+        mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
+        mAnswerTextView = findViewById(R.id.answer_text_view);
+        mShowAnswerButton = findViewById(R.id.show_answer_button);
+
+        mShowAnswerButton.setOnClickListener(v -> {
+            if (mAnswerIsTrue) {
+                mAnswerTextView.setText(R.string.true_button);
+            } else {
+                mAnswerTextView.setText(R.string.false_button);
+            }
+        });
+    }
+}
+
+Question.java
+package com.example.geoquizz;
+
+public class Question {
+    private int mTextResId;
+    private boolean mAnswerTrue;
+
+    public Question(int textResId, boolean answerTrue) {
+        mTextResId = textResId;
+        mAnswerTrue = answerTrue;
+    }
+
+    public int getTextResId() {
+        return mTextResId;
+    }
+
+    public boolean isAnswerTrue() {
+        return mAnswerTrue;
+    }
+}
